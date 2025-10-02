@@ -48,7 +48,7 @@ export class DemoTitle extends LitElement {
                 <br><br>
                 <p>Suggested prompts to try out:</p>
                 <ul>
-                    <li>What's the weather forecast for Maui, Hawaii?</li>
+                    <li>What's the 3 day weather forecast for Orlando, Florida?</li>
                     <li>Will I need an umbrella this week in Austin, TX?</li>
                     <li>Will it snow in the next 4 days in Toronto, Canada?</li>
                     <li>Who's going to see more rainfall this week, Maui, Hawaii or Seattle, Washington?</li>

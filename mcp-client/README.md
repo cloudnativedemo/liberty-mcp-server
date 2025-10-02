@@ -9,23 +9,30 @@ This project provides a Quarkus-based MCP (Model Context Protocol) client applic
 
 ## Configuration
 
-The application is configured in `application.properties`:
+The application is configured in `application.properties`.  The connection to the MCP Server is configured using the following properties:
 
 ```properties
 # MCP Server connection
 quarkus.langchain4j.mcp.weather.transport-type=streamable-http
 quarkus.langchain4j.mcp.weather.url=http://localhost:9080/mcp-liberty-server/mcp
+```
+By default, Ollama is used as the LLM (Large Language Model) provider, with the `gpt-oss:20b` model. Alternatively, OpenAI can be used by setting the `quarkus.langchain4j.chat-model.provider` property to `openai` and providing an OpenAI API Key via `quarkus.langchain4j.openai.api-key`.
+```properties
+# LLM Provider Configuration
+# quarkus.langchain4j.chat-model.provider=ollama
+quarkus.langchain4j.chat-model.provider=openai
 
-# Ollama LLM configuration
-quarkus.langchain4j.chat-model.provider=ollama
-quarkus.langchain4j.ollama.chat-model.model-id=gpt-oss:20b
+# OpenAI settings
+quarkus.langchain4j.openai.api-key=${OPENAI_API_KEY}
+quarkus.langchain4j.openai.chat-model.model-name=gpt-5-mini
 ```
 
 ## Prerequisites
 
-- Java 17+
-- Maven 3.8.1+
-- Ollama
+- [Java 17+](https://developer.ibm.com/languages/java/semeru-runtimes/downloads/)
+- [Ollama](https://ollama.com/download/)
+- (Optional) Maven 3.8.1+ 
+  - Alternatively use the provided Maven wrapper via `./mvnw` or `mvnw.cmd`
 
 ## Running the Application
 

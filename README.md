@@ -15,8 +15,8 @@ The client application allows users to ask weather-related questions in natural 
 
 - Java 17 or later
 - Maven 3.8.1 or later
-- [Ollama](https://ollama.ai/) for local LLM support (running on port 11434)
-   - By default, the `gpt-oss:20b` model is used.  Other models can be specified via the `quarkus.langchain4j.ollama.chat-model.model-id` property in `mcp-client/src/main/resources/application.properties`
+- [OpenAI API Key](https://platform.openai.com/api-keys) or [Ollama](https://ollama.ai/) for local LLM support
+   - Ollama is the default.  Refer to `mcp-client/README.md` for more details.
 
 ## Getting Started
 
@@ -43,7 +43,7 @@ The Liberty server will start on port 9080.
 1. Open http://localhost:8080/ in your browser
 2. Click the chat icon in the bottom right corner to start a conversation
 3. Ask weather-related questions like:
-   - What's the weather forecast for Maui, Hawaii?
+   - What's the 3 day weather forecast for Maui, Hawaii?
    - Will I need an umbrella this week in Austin, TX?
    - Will it snow in the next 4 days in Toronto, Canada?
    - Who's going to see more rainfall this week, Maui, Hawaii or Seattle, Washington?
@@ -51,22 +51,11 @@ The Liberty server will start on port 9080.
 ## How It Works
 
 1. The user sends a weather-related query to the Quarkus client
-2. The client uses an LLM (via Ollama) to process the query
+2. The client uses an LLM (via Ollama or OpenAI) to process the query
 3. The LLM determines whether it needs weather data and if so calls the MCP tool
 4. The Liberty server receives the tool request and calls the Open-Meteo API
 5. The weather data is returned to the MCP client
 6. The LLM formats the response and presents it to the user
-
-## Architecture
-
-```
-┌─────────────────┐         ┌─────────────────┐         ┌─────────────────┐         ┌─────────────────┐
-│                 │         │                 │         │                 │         │                 │
-│   Chatbot UI    │ ◄─────► │  Quarkus Client │ ◄─────► │  Liberty Server │ ◄─────► │  Open-Meteo API │
-│    (Browser)    │    WS   │  (MCP Client)   │   MCP   │  (MCP Server)   │   REST  │  (Weather Data) │
-│                 │         │                 │         │                 │         │                 │
-└─────────────────┘         └─────────────────┘         └─────────────────┘         └─────────────────┘
-```
 
 ## Project Structure
 
@@ -74,3 +63,35 @@ The Liberty server will start on port 9080.
 - `mcp-liberty-server/`: Liberty MCP server providing the weather forecast tool
 
 See the README files in each directory for more details about the specific components.
+## Architecture
+```mermaid
+---
+config:
+  flowchart:
+    subGraphTitleMargin:
+      top: 10
+      bottom: 18
+---
+flowchart TD
+    LLM["**LLM**<br>(Ollama)"]
+    UI["**Chatbot UI**<br>(Browser)"]
+    Client["**MCP Client**<br>(Quarkus)"]
+    
+    subgraph Server["**MCP Server**<br>(Liberty)"]
+        Tool["**MCP Tool**<br>(getForecast)"]
+    end
+    
+    API["**Weather Data**<br>(Open-Meteo API)"]
+    
+    LLM <--"REST"--> Client
+    UI <--"WS"--> Client
+    Client <--"MCP"--> Server
+    Server <--"REST"--> API
+    
+    classDef component fill:#f9f9f9,stroke:#333,stroke-width:1px,color:black;
+    class LLM,UI,Client,API component;
+    classDef serverComponent fill:#f9f9f9,stroke:#333,stroke-width:1px,color:black;
+    class Server serverComponent;
+    classDef toolComponent fill:#f0f0f0,stroke:#666,stroke-width:1px,color:black;
+    class Tool toolComponent;
+```

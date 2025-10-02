@@ -47,8 +47,9 @@ public String getForecast(@ToolArg(name = "latitude", description = "Latitude of
 
 ## Prerequisites
 
-- Java 17+
-- Maven 3.8.1+
+- [Java 17+](https://developer.ibm.com/languages/java/semeru-runtimes/downloads/)
+- (Optional) Maven 3.8.1+ 
+  - Alternatively use the provided Maven wrapper via `./mvnw` or `mvnw.cmd`
 
 ## Running the Server
 
