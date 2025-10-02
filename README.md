@@ -13,10 +13,10 @@ The client application allows users to ask weather-related questions in natural 
 
 ## Prerequisites
 
-- Java 17 or later
-- Maven 3.8.1 or later
-- [OpenAI API Key](https://platform.openai.com/api-keys) or [Ollama](https://ollama.ai/) for local LLM support
-   - Ollama is the default.  Refer to `mcp-client/README.md` for more details.
+- [Java 17+](https://developer.ibm.com/languages/java/semeru-runtimes/downloads/)
+- [Ollama](https://ollama.com/download/) or [OpenAI API Key](https://platform.openai.com/account/api-keys)
+- (Optional) Maven 3.8.1+ 
+  - Alternatively use the provided Maven wrapper via `./mvnw` or `mvnw.cmd`
 
 ## Getting Started
 

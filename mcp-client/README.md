@@ -30,7 +30,7 @@ quarkus.langchain4j.openai.chat-model.model-name=gpt-5-mini
 ## Prerequisites
 
 - [Java 17+](https://developer.ibm.com/languages/java/semeru-runtimes/downloads/)
-- [Ollama](https://ollama.com/download/)
+- [Ollama](https://ollama.com/download/) or [OpenAI API Key](https://platform.openai.com/account/api-keys)
 - (Optional) Maven 3.8.1+ 
   - Alternatively use the provided Maven wrapper via `./mvnw` or `mvnw.cmd`
 
