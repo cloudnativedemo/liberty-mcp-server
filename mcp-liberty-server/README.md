@@ -16,6 +16,12 @@ The application uses:
 - `WeatherClient`: MicroProfile REST client for the Open-Meteo API
 - `server.xml`: Liberty server configuration with MCP feature enabled
 
+## Prerequisites
+
+- [Java 17+](https://developer.ibm.com/languages/java/semeru-runtimes/downloads/)
+- (Optional) Maven 3.8.1+ 
+  - Alternatively use the provided Maven wrapper via `./mvnw` or `mvnw.cmd`
+
 ## Server Configuration
 
 The Liberty server is configured in `server.xml`:
@@ -44,12 +50,6 @@ public String getForecast(@ToolArg(name = "latitude", description = "Latitude of
     // Implementation calls the Open-Meteo API
 }
 ```
-
-## Prerequisites
-
-- [Java 17+](https://developer.ibm.com/languages/java/semeru-runtimes/downloads/)
-- (Optional) Maven 3.8.1+ 
-  - Alternatively use the provided Maven wrapper via `./mvnw` or `mvnw.cmd`
 
 ## Running the Server
 

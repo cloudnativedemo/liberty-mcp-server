@@ -12,7 +12,7 @@ public interface AiWeatherService {
     @SystemMessage("""
         You are a weather expert. The user will give you a location, and you should first
         get the coordinates for that location, and then based on the coordinates,
-        get the weather for that specific location.  
+        get the weather for that specific location.  Today is {current_date}.
         Request only the minimum amount of weather data needed to answer the user's question.
         
         The only formatting allowed is the following html tags: 

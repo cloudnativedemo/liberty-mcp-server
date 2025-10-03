@@ -7,6 +7,13 @@ This project provides a Quarkus-based MCP (Model Context Protocol) client applic
 - `AiWeatherService`: Interface that defines the AI service with MCP tool integration
 - `ChatBotWebSocket`: Handles WebSocket communication for the chat interface
 
+## Prerequisites
+
+- [Java 17+](https://developer.ibm.com/languages/java/semeru-runtimes/downloads/)
+- [Ollama](https://ollama.com/download/) or [OpenAI API Key](https://platform.openai.com/account/api-keys)
+- (Optional) Maven 3.8.1+ 
+  - Alternatively use the provided Maven wrapper via `./mvnw` or `mvnw.cmd`
+
 ## Configuration
 
 The application is configured in `application.properties`.  The connection to the MCP Server is configured using the following properties:
@@ -22,17 +29,10 @@ By default, Ollama is used as the LLM (Large Language Model) provider, with the 
 # quarkus.langchain4j.chat-model.provider=ollama
 quarkus.langchain4j.chat-model.provider=openai
 
-# OpenAI settings
+# OpenAI settings (set the OPENAI_API_KEY and uncomment the following line to use an OpenAI model)
 quarkus.langchain4j.openai.api-key=${OPENAI_API_KEY}
 quarkus.langchain4j.openai.chat-model.model-name=gpt-5-mini
 ```
-
-## Prerequisites
-
-- [Java 17+](https://developer.ibm.com/languages/java/semeru-runtimes/downloads/)
-- [Ollama](https://ollama.com/download/) or [OpenAI API Key](https://platform.openai.com/account/api-keys)
-- (Optional) Maven 3.8.1+ 
-  - Alternatively use the provided Maven wrapper via `./mvnw` or `mvnw.cmd`
 
 ## Running the Application
 
