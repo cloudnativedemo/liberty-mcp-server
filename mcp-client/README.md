@@ -10,7 +10,7 @@ This project provides a Quarkus-based MCP (Model Context Protocol) client applic
 ## Prerequisites
 
 - [Java 17+](https://developer.ibm.com/languages/java/semeru-runtimes/downloads/)
-- [Ollama](https://ollama.com/download/) or [OpenAI API Key](https://platform.openai.com/account/api-keys)
+- [Ollama](https://ollama.com/download/) or [OpenAI API Key](https://platform.openai.com/account/api-keys) or [Anthropic API Key](https://docs.claude.com/en/docs/get-started)
 - (Optional) Maven 3.8.1+ 
   - Alternatively use the provided Maven wrapper via `./mvnw` or `mvnw.cmd`
 
@@ -23,16 +23,13 @@ The application is configured in `application.properties`.  The connection to th
 quarkus.langchain4j.mcp.weather.transport-type=streamable-http
 quarkus.langchain4j.mcp.weather.url=http://localhost:9080/mcp-liberty-server/mcp
 ```
-By default, Ollama is used as the LLM (Large Language Model) provider, with the `gpt-oss:20b` model. Alternatively, OpenAI can be used by setting the `quarkus.langchain4j.chat-model.provider` property to `openai` and providing an OpenAI API Key via `quarkus.langchain4j.openai.api-key`.
-```properties
-# LLM Provider Configuration
-# quarkus.langchain4j.chat-model.provider=ollama
-quarkus.langchain4j.chat-model.provider=openai
+### Model Options
 
-# OpenAI settings (set the OPENAI_API_KEY and uncomment the following line to use an OpenAI model)
-quarkus.langchain4j.openai.api-key=${OPENAI_API_KEY}
-quarkus.langchain4j.openai.chat-model.model-name=gpt-5-mini
-```
+**Ollama** can be used by commenting out lines from the `application.properties` file containing `openai` or `anthropic` and uncommenting lines containing `ollama`. This is the default configuration.
+
+**OpenAI** can be used by commenting out lines from the `application.properties` file containing `ollama` or `anthropic` and uncommenting lines containing `openai`. You must also provide an OpenAI API Key by setting an `OPENAI_API_KEY` environment variable before running.
+
+**Anthropic** can be used by commenting out lines from the `application.properties` file containing `ollama` or `openai` and uncommenting lines containing `anthropic`. You must also provide an Anthropic API Key by setting an `ANTHROPIC_API_KEY` environment variable before running.
 
 ## Running the Application
 
