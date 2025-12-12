@@ -1,97 +1,81 @@
-# Liberty MCP Server
+# Overview
+This is an extension of the Liberty MCP Demo (https://github.com/mbroz2/liberty-mcp-server). This project explores the possibility of having multiple MCP tools and how to add guardrails to restrict the LLM from going beyond the scopes of the MCP server
 
-This project demonstrates Liberty servings as a Model Context Protocol (MCP) Server (and Quarkus as the MCP Client). The demo showcases how AI applications can leverage external business logic (new or existing) through the use of MCP tools.
+As a reminder, the MCP client is based on Quarkus, and the MCP server is running on an Open Liberty server with the microprofile and mcp-server module enabled. Refer to the Liberty MCP Demo repo for more details on the setup and how to run the demo.
 
-## Project Overview
+# MCP Client
 
-The demo consists of two main components:
+- **MultiToolService.java** - the **AiWeatherService**'s getWeather tool called directly by the chatbot websocket and restricts all user messages to the tool. Instead the getWeather tool is replaced by a generic `chat` tool that will have a role as a bridge to route the user message to the respective tool. In this example, beside the `getWeather` tool, user can also get the current time of a location via the `getCurrentTimeinTimeZone` tool
 
-1. **Liberty MCP Server**: Provides a weather forecast tool that can be called by MCP clients
-2. **Quarkus MCP Client**: A chatbot application that uses the weather forecast tool through MCP
-
-The client application allows users to ask weather-related questions in natural language. The AI model processes these questions and uses the MCP tool provided by the Liberty server to retrieve weather forecasts.
-
-## Prerequisites
-
-- [Java 17+](https://developer.ibm.com/languages/java/semeru-runtimes/downloads/)
-- [Ollama](https://ollama.com/download/) or [OpenAI API Key](https://platform.openai.com/account/api-keys)
-- (Optional) Maven 3.8.1+ 
-  - Alternatively use the provided Maven wrapper via `./mvnw` or `mvnw.cmd`
-
-## Getting Started
-
-### 1. Start the Quarkus Client
-
-```bash
-cd mcp-client
-./mvnw quarkus:dev
+```java
+public interface MultiToolService {
+    @SystemMessage("""
+        You are a helpful assistant capable of calling tools. 
+    """)
+    @McpToolBox
+    String chat(@UserMessage String message);   
+}
 ```
 
-The Quarkus application will start on port 8080.
+The `chat` tool will accept a `UserMessage` and pass any message to the LLM model as defined in Quarkus' `application.properties` and will get the response (as described on the `SystemMessage`) directly from the LLM model without calling the MCP server.
 
-### 2. Start the Liberty Server
+To make the `chat` tool play as mediator, we'll need to add additional instructions that define the scope i.e. not to answer directly, but to use the weather and datetime tools from the MCP server by adding the following to the tool description
 
-```bash
-cd mcp-liberty-server
-./mvnw liberty:dev
+```java
+public interface MultiToolService {
+    @SystemMessage("""
+        You are a helpful assistant capable of calling tools. 
+        Use the provided MCP tools when appropriate.
+        The tools to call are getWeather and getCurrentTimeinTimezone
+        Do not answer directly - always call the appropriate method
+    """)
+    @McpToolBox
+    String chat(@UserMessage String message);   
+}
 ```
 
-The Liberty server will start on port 9080.
+At this point, the chatbot is capable of calling either the `getWeather` tool or the `dateime` tool to answer respective questions. Next step, we want to format the response e.g. to use Celsius instead of Fahrenheit, to respond in a friendly sentence, etc.
 
-### 3. Access the Application
+```java
+public interface MultiToolService {
+    @SystemMessage("""
+        You are a helpful assistant capable of calling tools. 
+        Use the provided MCP tools when appropriate.
+        The tools to call are getWeather and getCurrentTimeinTimezone
+        Do not answer directly - always call the appropriate method
+        The returned temperatures must be in Celsius, if not convert it to Celsius
+        For datetime question, return response in a full friendly English sentence
+        
+        The only formatting allowed is the following html tags: 
+          b, strong, i, em, u, del, small, big, sup, sub, p, h1, h2, h3, h4, h5, h6, br, hr, ul, ol, li
+        
+    """)
+    @McpToolBox
+    String chat(@UserMessage String message);
 
-1. Open http://localhost:8080/ in your browser
-2. Click the chat icon in the bottom right corner to start a conversation
-3. Ask weather-related questions like:
-   - What's the 3 day weather forecast for Maui, Hawaii?
-   - Will I need an umbrella this week in Austin, TX?
-   - Will it snow in the next 4 days in Toronto, Canada?
-   - Who's going to see more rainfall this week, Maui, Hawaii or Seattle, Washington?
-
-## How It Works
-
-1. The user sends a weather-related query to the Quarkus client
-2. The client uses an LLM (via Ollama or OpenAI) to process the query
-3. The LLM determines whether it needs weather data and if so calls the MCP tool
-4. The Liberty server receives the tool request and calls the Open-Meteo API
-5. The weather data is returned to the MCP client
-6. The LLM formats the response and presents it to the user
-
-## Project Structure
-
-- `mcp-client/`: Quarkus MCP client with an application providing an AI chatbot interface
-- `mcp-liberty-server/`: Liberty MCP server providing the weather forecast tool
-
-See the README files in each directory for more details about the specific components.
-## Architecture
-```mermaid
----
-config:
-  flowchart:
-    subGraphTitleMargin:
-      top: 10
-      bottom: 18
----
-flowchart TD
-    LLM["**LLM**<br>(Ollama)"]
-    UI["**Chatbot UI**<br>(Browser)"]
-    Client["**MCP Client**<br>(Quarkus)"]
     
-    subgraph Server["**MCP Server**<br>(Liberty)"]
-        Tool["**MCP Tool**<br>(getForecast)"]
-    end
+}
+```
+
+Since the LLM model will try to respond to all the questions even when it's not related to weather or datetime as the application is designed for, we'll need to add some guardrails to stop the tool from trying to respond to other questions. In this example, if the MCP client can't find a tool matched with the question, it must return an apology message
+
+```java
+public interface MultiToolService {
+    @SystemMessage("""
+        You are a helpful assistant capable of calling tools. 
+        Use the provided MCP tools when appropriate.
+        The tools to call are getWeather and getCurrentTimeinTimezone
+        Do not answer directly - always call the appropriate method
+        The returned temperatures must be in Celsius, if not convert it to Celsius
+        For datetime question, return response in a full friendly English sentence
+        
+        The only formatting allowed is the following html tags: 
+          b, strong, i, em, u, del, small, big, sup, sub, p, h1, h2, h3, h4, h5, h6, br, hr, ul, ol, li
+        If there isn't a tool matched, return with an apology message
+    """)
+    @McpToolBox
+    String chat(@UserMessage String message);
+
     
-    API["**Weather Data**<br>(Open-Meteo API)"]
-    
-    LLM <--"REST"--> Client
-    UI <--"WS"--> Client
-    Client <--"MCP"--> Server
-    Server <--"REST"--> API
-    
-    classDef component fill:#f9f9f9,stroke:#333,stroke-width:1px,color:black;
-    class LLM,UI,Client,API component;
-    classDef serverComponent fill:#f9f9f9,stroke:#333,stroke-width:1px,color:black;
-    class Server serverComponent;
-    classDef toolComponent fill:#f0f0f0,stroke:#666,stroke-width:1px,color:black;
-    class Tool toolComponent;
+}
 ```
