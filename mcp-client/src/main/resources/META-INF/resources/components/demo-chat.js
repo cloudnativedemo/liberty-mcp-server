@@ -58,7 +58,7 @@ export class DemoChat extends LitElement {
         const chatBot = document.getElementsByTagName("chat-bot")[0];
 
         const protocol = (window.location.protocol === 'https:') ? 'wss' : 'ws';
-        const socket = new WebSocket(protocol + '://' + window.location.host + '/chatbot');
+        const socket = new WebSocket(protocol + '://' + window.location.host + '/mtchatbot');
 
         const that = this;
         socket.onmessage = function (event) {

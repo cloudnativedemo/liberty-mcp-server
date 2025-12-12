@@ -20,4 +20,15 @@ public interface AiWeatherService {
         """)
     @McpToolBox
     String getWeather(String message);
+
+    @SystemMessage("""
+        You are a helpful assistant that provide the current time of a requested location. The user will give you a city name, 
+        and you should first get the timezone of that location, 
+        and you will return the current time in the timezone.
+
+        The only formatting allowed is the following html tags: 
+          b, strong, i, em, u, del, small, big, sup, sub, p, h1, h2, h3, h4, h5, h6, br, hr, ul, ol, li
+        """)
+    @McpToolBox
+    String getCurrentTime(String city);
 }
