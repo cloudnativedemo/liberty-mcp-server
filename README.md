@@ -6,22 +6,16 @@ As a reminder, the MCP client is based on Quarkus, and the MCP server is running
 # High Level Architecture
 
 ```mermaid
----
-config:
-  flowchart:
-    subGraphTitleMargin:
-      top: 10
-      bottom: 18
----
+
 flowchart TD
     LLM["**LLM**<br>(Ollama)"]
     UI["**Chatbot UI**<br>(Browser)"]
     
-    subgraph Client["**MCP Client**<br>(Quarkus)"]
+    subgraph Client["**MCP Client** (Quarkus)"]
         Tool_Client["chat"]
     end
     
-    subgraph Server["**MCP Server**<br>(Liberty)"]
+    subgraph Server["**MCP Server** (Liberty)"]
         direction TB
         Tool_1["**MCP Tool 1**<br>(getWeather)"]
         Tool_2["**MCP Tool 2**<br>(getCurrentTimeinTimezone)"]
