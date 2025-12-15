@@ -33,9 +33,10 @@ flowchart TD
     classDef serverComponent fill:#f9f9f9,stroke:#333,stroke-width:1px,color:black;
     class Server serverComponent;
     classDef toolComponent fill:#f0f0f0,stroke:#666,stroke-width:1px,color:black;
+    classDef toolNew fill:#f75348,stroke:#666,stroke-width:1px,color:black;
     class Tool_1 toolComponent;
-    class Tool_2 toolComponent;
-    class Tool_Client toolComponent;
+    class Tool_2 toolNew;
+    class Tool_Client toolNew;
 ```
 
 
